@@ -8,6 +8,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
+import { DEFAULT_SETTINGS } from "@/lib/constants";
 // =============================================================================
 // BETTER AUTH SCHEMA - Required tables for Better Auth to function
 // =============================================================================
@@ -84,16 +85,24 @@ export const userSetting = pgTable("user_settings", {
     .notNull()
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
-  workDuration: integer("work_duration").notNull().default(25),
-  shortBreakDuration: integer("short_break_duration").notNull().default(5),
-  longBreakDuration: integer("long_break_duration").notNull().default(15),
+  workDuration: integer("work_duration")
+    .notNull()
+    .default(DEFAULT_SETTINGS.workDuration),
+  shortBreakDuration: integer("short_break_duration")
+    .notNull()
+    .default(DEFAULT_SETTINGS.shortBreakDuration),
+  longBreakDuration: integer("long_break_duration")
+    .notNull()
+    .default(DEFAULT_SETTINGS.longBreakDuration),
   sessionsBeforeLongBreak: integer("sessions_before_long_break")
     .notNull()
-    .default(4),
-  soundEnabled: boolean("sound_enabled").notNull().default(true),
+    .default(DEFAULT_SETTINGS.sessionsBeforeLongBreak),
+  soundEnabled: boolean("sound_enabled")
+    .notNull()
+    .default(DEFAULT_SETTINGS.soundEnabled),
   notificationsEnabled: boolean("notifications_enabled")
     .notNull()
-    .default(true),
+    .default(DEFAULT_SETTINGS.notificationsEnabled),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
