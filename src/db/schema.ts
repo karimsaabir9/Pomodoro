@@ -1,4 +1,12 @@
-import { boolean, pgTable, timestamp, text } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  pgTable,
+  timestamp,
+  text,
+  integer,
+  index,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 
 // =============================================================================
 // BETTER AUTH SCHEMA - Required tables for Better Auth to function
@@ -69,3 +77,87 @@ export const verification = pgTable("verification", {
   createdAt: timestamp("created_at"),
   updatedAt: timestamp("updated_at"),
 });
+
+export const userSetting = pgTable("user_settings", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: "cascade" }),
+  workDuration: integer("work_duration").notNull().default(25),
+  shortBreakDuration: integer("short_break_duration").notNull().default(5),
+  longBreakDuration: integer("long_break_duration").notNull().default(15),
+  sessionsBeforeLongBreak: integer("sessions_before_long_break")
+    .notNull()
+    .default(4),
+  soundEnabled: boolean("sound_enabled").notNull().default(true),
+  notificationsEnabled: boolean("notifications_enabled")
+    .notNull()
+    .default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const task = pgTable(
+  "task",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    estimatedPomodoros: integer("estimated_pomodoros").notNull().default(1),
+    actualPomodoros: integer("actual_pomodoros").notNull().default(0),
+    isCompleted: boolean("is_completed").notNull().default(false),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("task_user_completed_sort_idx").on(
+      table.userId,
+      table.isCompleted,
+      table.sortOrder,
+    ),
+  ],
+);
+
+export const pomodoroSession = pgTable(
+  "pomodoro_session",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    taskId: text("task_id").references(() => task.id, { onDelete: "set null" }),
+    duration: integer("duration").notNull(),
+    type: text("type").notNull(), // "work" | "short_break" | "long_break"
+    completedAt: timestamp("completed_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("pomodoro_session_user_completed_idx").on(
+      table.userId,
+      table.completedAt,
+    ),
+  ],
+);
+
+export const pomodoroStats = pgTable(
+  "pomodoro_stats",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    date: text("date").notNull(), // YYYY-MM-DD
+    completedPomodoros: integer("completed_pomodoros").notNull().default(0),
+    totalFocusTime: integer("total_focus_time").notNull().default(0), // seconds
+    totalBreakTime: integer("total_break_time").notNull().default(0), // seconds
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("pomodoro_stats_user_date_idx").on(table.userId, table.date),
+  ],
+);
