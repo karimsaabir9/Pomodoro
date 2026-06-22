@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   createContext,
   useCallback,
+  useContext,
   useEffect,
   useReducer,
   useRef,
@@ -208,4 +209,51 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => clearInterval(interval);
   }, [state.isRunning]);
+
+  useEffect(() => {
+    if(state.timeRemaining === 0 && !state.isRunning) {
+      if(state.totalTime > 0) {
+        handleTimerComplete();
+      }
+    }
+  }, [state.timeRemaining, state.isRunning, state.totalTime, handleTimerComplete]);
+
+  useEffect(() => {
+    if(typeof Notification !== "undefined" && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
+    const minutes = Math.floor(state.timeRemaining / 60);
+    const seconds = state.timeRemaining % 60;
+    const timeStr = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    const modeStr = state.mode === "work" ? "Work": state.mode === "short_break" ? "Short Break": "Long Break";
+    document.title = `${timeStr} - ${modeStr} | NextTimer`;
+    return () => { document.title = "NextTimer" };
+  }, [state.timeRemaining, state.mode]);
+
+
+  const getDurationForMode = useCallback(
+    (mode: TimerMode) => {
+      return mode === "work" ? workDuration * 60:
+        mode === "short_break" ? shortBreakDuration * 60:
+          longBreakDuration * 60;
+    }, [workDuration, shortBreakDuration, longBreakDuration]
+  );
+
+  const value: TimerContextValue = {
+    state,
+    start: () => dispatch({type: "START"}),
+    pause: () => dispatch({type: "PAUSE"}),
+    reset: () => dispatch({type: "RESET", totalTime: getDurationForMode(state.mode)}),
+    setActiveTask: (taskId) => dispatch({type: "SET_TASK", taskId}),
+    setMode: (mode) => dispatch({type: "SET_MODE", mode, totalTime: getDurationForMode(mode)}),
+  };
+  return <TimerContext value={value}>{children}</TimerContext>;
+};
+export const useTimer = () => {
+  const ctx = useContext(TimerContext);
+  if(!ctx) throw new Error("useTimer must be used within TimerProvider");
+  return ctx;
 };
