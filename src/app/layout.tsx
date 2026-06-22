@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js + tRPC + Better Auth + Drizzle + Neon",
-  description: "Full-stack TypeScript starter with end-to-end type safety",
+  title: "NextTimer",
+  description: "A Productivity App Based on the Pomodoro Timer",
 };
 
 export default function RootLayout({
