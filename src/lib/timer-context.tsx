@@ -1,8 +1,16 @@
 "use client";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createContext, useEffect, useReducer, useRef } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
 import { DEFAULT_SETTINGS } from "./constants";
+import { playNotificationSound } from "./audio";
+import { toast } from "sonner";
 
 type TimerMode = "work" | "short_break" | "long_break";
 
@@ -137,4 +145,67 @@ export const TimerProvider = ({ children }: { children: React.ReactNode }) => {
     }
     prevWorkRef.current = workDuration;
   }, [workDuration, state.isRunning, state.mode]);
+
+  const handleTimerComplete = useCallback(() => {
+    const sR = stateRef.current;
+    const cfg = settingsRef.current;
+
+    if (cfg.soundEnabled) {
+      playNotificationSound();
+    }
+    if (
+      cfg.notificationsEnabled &&
+      typeof Notification !== "undefined" &&
+      Notification.permission === "granted"
+    ) {
+      const message =
+        sR.mode === "work"
+          ? "Work session complete! Time for a break"
+          : "Break is over! Get ready to focus.";
+      new Notification("NextTimer", { body: message });
+    }
+
+    // TODO: log session to db
+    // TODO: Increament task count
+
+    let nextMode: TimerMode;
+    let nextSession = sR.currentSessionNumber;
+
+    if (sR.mode === "work") {
+      if (sR.currentSessionNumber % cfg.sessionsBeforeLongBreak === 0) {
+        nextMode = "long_break";
+      } else {
+        nextMode = "short_break";
+      }
+      toast.success("Work session complete! Time for a break!");
+    } else {
+      nextMode = "work";
+      nextSession = sR.mode === "long_break" ? 1 : sR.currentSessionNumber + 1;
+    }
+
+    const nextTime =
+      nextMode === "work"
+        ? cfg.workDuration * 60
+        : nextMode === "short_break"
+          ? cfg.shortBreakDuration * 60
+          : cfg.longBreakDuration * 60;
+    dispatch({
+      type: "COMPLETE",
+      nextMode,
+      nextTime,
+      nextSession,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Countdown Interval
+  useEffect(() => {
+    if (!state.isRunning) return;
+
+    const interval = setInterval(() => {
+      dispatch({ type: "TICK" });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [state.isRunning]);
 };
