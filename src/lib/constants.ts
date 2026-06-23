@@ -7,10 +7,10 @@ export const DEFAULT_SETTINGS = {
   notificationsEnabled: true,
 };
 
-export const MIN_DURATION = 1;
-export const MAX_DURATION = 60;
-export const MIN_SESSIONS = 1;
-export const MAX_SESSIONS = 10;
+export const MIN_DURATION=1;
+export const MAX_DURATION=60;
+export const MIN_SESSIONS=1;
+export const MAX_SESSIONS=10;
 
 export const DEFAULT_TASK_INFO = {
   defaultEstPomodoros: 1,

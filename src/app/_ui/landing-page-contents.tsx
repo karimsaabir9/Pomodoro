@@ -34,60 +34,37 @@ const FEATURES = [
 ];
 
 const STEPS = [
-  {
-    number: "1",
-    title: "Set your tasks",
-    description: "Add the tasks you want to tackle during your focus session.",
-  },
-  {
-    number: "2",
-    title: "Start the timer",
-    description: "Hit start and work in focused intervals with timed breaks.",
-  },
-  {
-    number: "3",
-    title: "Track your progress",
-    description: "Review your stats, build streaks, and keep improving.",
-  },
+  { number: "1", title: "Set your tasks", description: "Add the tasks you want to tackle during your focus session." },
+  { number: "2", title: "Start the timer", description: "Hit start and work in focused intervals with timed breaks." },
+  { number: "3", title: "Track your progress", description: "Review your stats, build streaks, and keep improving." },
 ];
-
-const AUTHOR_NAME = "KarimSaabir";
 
 export const LandingPageContents = () => {
   const scrollToId = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(id)?.scrollIntoView({behavior: "smooth"});
   };
-
+  
   return (
     <div className="flex flex-col min-h-screen w-full">
       {/* Navbar  */}
       <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4">
-          <button
-            className="text-lg font-semibold tracking-light cursor-pointer"
-            onClick={() => scrollToId("hero")}
-          >
+          <button className="text-lg font-semibold tracking-light" onClick={() => scrollToId("hero")}>
             NextTimer
           </button>
-
+          
           <nav className="hidden items-center gap-6 md:flex">
-            <button
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-              onClick={() => scrollToId("features")}
-            >
+            <button className="text-sm text-muted-foreground transition-colors hover:text-foreground" onClick={() => scrollToId("features")}>
               Features
             </button>
-            <button
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-              onClick={() => scrollToId("how-it-works")}
-            >
+            <button className="text-sm text-muted-foreground transition-colors hover:text-foreground" onClick={() => scrollToId("how-it-works")}>
               How it works
             </button>
           </nav>
 
           <div className="flex gap-2 items-center">
             <Link href="/login">
-              <Button className="hidden sm:inline-flex cursor-pointer" variant="ghost">
+              <Button className="hidden sm:inline-flex" variant="ghost">
                 Log In
               </Button>
             </Link>
@@ -96,10 +73,7 @@ export const LandingPageContents = () => {
       </header>
 
       {/* Hero */}
-      <section
-        id="hero"
-        className="flex flex-col items-center justify-center gap-6 px-4 py-24 md:py-32 text-center"
-      >
+      <section id="hero" className="flex flex-col items-center justify-center gap-6 px-4 py-24 md:py-32 text-center">
         <Badge variant="secondary" className="text-sm">
           Free &amp; Open Source
         </Badge>
@@ -113,10 +87,9 @@ export const LandingPageContents = () => {
         </p>
         <div className="flex gap-4 mt-2">
           <Link href="/login">
-            <Button className="cursor-pointer" size="lg">Get Started</Button>
+            <Button size="lg">Get Started</Button>
           </Link>
           <Button
-          className="cursor-pointer"
             size="lg"
             variant="outline"
             onClick={() =>
@@ -131,7 +104,10 @@ export const LandingPageContents = () => {
       </section>
 
       {/* Features */}
-      <section id="features" className="px-4 py-16 md:py-24 bg-muted/40">
+      <section
+        id="features"
+        className="px-4 py-16 md:py-24 bg-muted/40"
+      >
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Everything you need to focus
@@ -151,7 +127,7 @@ export const LandingPageContents = () => {
       </section>
 
       {/* How It Works */}
-      <section className="px-4 py-16 md:py-24" id="how-it-works">
+      <section id="how-it-works" className="px-4 py-16 md:py-24">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             How it works
@@ -176,19 +152,17 @@ export const LandingPageContents = () => {
           Ready to boost your productivity?
         </h2>
         <p className="text-lg text-muted-foreground max-w-xl">
-          Join now and start your first Pomodoro session. It only takes a minute
-          to get going.
+          Join now and start your first Pomodoro session. It only takes a
+          minute to get going.
         </p>
         <Link href="/login">
-          <Button className="cursor-pointer" size="lg">Start Your First Pomodoro</Button>
+          <Button size="lg">Start Your First Pomodoro</Button>
         </Link>
       </section>
 
       {/* Footer */}
       <footer className="flex items-center justify-center px-4 py-6 text-sm text-muted-foreground">
-        <p>
-          Pomodoro Timer &middot; Built with Next.js &middot; by {AUTHOR_NAME}
-        </p>
+        <p>Pomodoro Timer &middot; Built with Next.js</p>
       </footer>
     </div>
   );

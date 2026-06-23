@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { getQueryClient, trpc } from "@/trpc/server";
+import { getQueryClient } from "@/trpc/server";
 import { getSession } from "@/lib/auth";
 
 import { LandingPageContents } from "./_ui/landing-page-contents";
@@ -32,9 +32,6 @@ const LandingPage = async () => {
   if (session) redirect("/home");
 
   const queryClient = getQueryClient();
-
-  //SSR perfetch
-  await queryClient.prefetchQuery(trpc.settings.get.queryOptions());
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

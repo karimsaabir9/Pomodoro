@@ -1,5 +1,7 @@
 import { createTRPCRouter } from "../init";
+import { sessionsRouter } from "./sessions";
 import { settingsRouter } from "./settings";
+import { tasksRouter } from "./tasks";
 
 // =============================================================================
 // APP ROUTER - Root tRPC router that combines all sub-routers
@@ -25,7 +27,9 @@ import { settingsRouter } from "./settings";
 export const appRouter = createTRPCRouter({
   // Add routers here as you build features
   // Example: user: userRouter,
+  sessions: sessionsRouter,
   settings: settingsRouter,
+  tasks: tasksRouter,
 });
 
 export type AppRouter = typeof appRouter;

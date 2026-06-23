@@ -24,7 +24,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 interface ProviderProps {
   children: React.ReactNode;
-}
+};
 
 export const Provider = ({ children }: ProviderProps) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -38,7 +38,7 @@ export const Provider = ({ children }: ProviderProps) => {
   return (
     <TRPCReactProvider>
       {children}
-      <Toaster />
+      <Toaster/>
     </TRPCReactProvider>
   );
 };

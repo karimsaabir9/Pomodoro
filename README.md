@@ -109,4 +109,3 @@ This is a walkthrough starting point. Each commit in the git history represents 
 ## License
 
 MIT
-# Pomodoro

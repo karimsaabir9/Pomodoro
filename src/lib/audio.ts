@@ -1,11 +1,11 @@
 let audioContext: AudioContext | null = null;
 
 function getAudioContext(): AudioContext {
-  if (!audioContext) {
+  if(!audioContext) {
     audioContext = new AudioContext();
   }
   return audioContext;
-}
+};
 
 export function playNotificationSound() {
   try {
@@ -30,5 +30,5 @@ export function playNotificationSound() {
     oscillator.stop(ctx.currentTime + 0.5);
   } catch (err) {
     console.warn("Notification sound failed: ", err);
-  }
-}
+  };
+};

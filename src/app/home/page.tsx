@@ -2,10 +2,10 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { getQueryClient } from "@/trpc/server";
+import { getQueryClient, trpc } from "@/trpc/server";
 import { getSession, redirectToLogin } from "@/lib/auth";
 
-import { HomePageContents } from "./_ui/home-page-contents";
+import { HomePageContents, HomePageContentsSkeleton } from "./_ui/home-page-contents";
 
 // =============================================================================
 // HOME PAGE - Protected authenticated page
@@ -35,10 +35,18 @@ const HomePage = async () => {
 
   const queryClient = getQueryClient();
 
+  // SSR prefetch
+  await Promise.all([
+    queryClient.prefetchQuery(trpc.settings.get.queryOptions()),
+    queryClient.prefetchQuery(trpc.tasks.list.queryOptions()),
+    queryClient.prefetchQuery(trpc.sessions.todayCount.queryOptions()),
+    queryClient.prefetchQuery(trpc.sessions.streak.queryOptions())
+  ]);
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <ErrorBoundary fallback={<div>There was an error</div>}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<HomePageContentsSkeleton/>}>
           <HomePageContents />
         </Suspense>
       </ErrorBoundary>

@@ -18,8 +18,7 @@ import { defineConfig } from "drizzle-kit";
 //   - push: Great for development, applies changes directly
 //   - migrate: Better for production, creates versioned migration files
 // =============================================================================
-
-config({path: './.env.local'});
+config({ path: '.env.local' });
 
 export default defineConfig({
   out: "./drizzle",
